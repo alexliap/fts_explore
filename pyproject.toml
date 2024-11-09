@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fts_explore"
+dynamic = [
+  "version",
+]
+dependencies = [
+  "uni2ts@git+https://github.com/SalesforceAIResearch/uni2ts.git@main",
+]
+
+requires-python = ">=3.10"
+authors = [
+  {name = "Alexandros Liapatis", email = "alexandrosliapates@gmail.com"}
+]
+description = "Unified Training of Universal Time Series Forecasting Transformers"
+readme = "README.md"
+keywords = ["Time Series Forecasting", "Transformer", "Deep Learning", "PyTorch"]
+
+[project.optional-dependencies]
+dev = [
+  "hatch",
+  "ruff",
+  "isort",
+  "pre-commit",
+  "jupyter",
+  "ipywidgets",
+  "matplotlib",
+  "gdown",
+  "pyright",
+]
+
+[tool.hatch.version]
+path = "src/fts_explore/__about__.py"
+
+[tool.hatch.build]
+packages = ["src/fts_explore"]
+
+[tool.hatch.metadata]
+allow-direct-references=true

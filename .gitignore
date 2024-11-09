@@ -169,6 +169,5 @@ moirai_small_weights/
 moirai_base_weights/
 moirai_large_weights/
 *.csv
-*.png
 custom_data/
-.python_version
+.python-version
