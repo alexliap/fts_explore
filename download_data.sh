@@ -7,7 +7,8 @@ python -m pip install -e '.[dev]'
 echo "Install pre-commit ..."
 pre-commit install
 
-echo "CUSTOM_DATA_PATH=custom_data" >> .env
+# echo "CUSTOM_DATA_PATH=custom_data" >> .env
+export CUSTOM_DATA_PATH=custom_data
 
 # Define the URLs for the files to download
 FILE_URL_1="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/Statistics/2023/monthly_hourly_load_values_2023.csv"

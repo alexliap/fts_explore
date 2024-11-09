@@ -187,7 +187,7 @@ def main(cfg: DictConfig):
     ).build_dataset(file=cfg.dataset_path, dataset_type="wide", freq="H")
 
     # create backtesting with refit loop
-    for i in range(1, num_of_weeks + 1, iter_step):
+    for i in range(30, num_of_weeks + 1, iter_step):
         # same with train size
         offset = i * (7 * 24)
 
