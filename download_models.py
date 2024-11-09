@@ -1,4 +1,5 @@
 import gdown
 
-url = "https://drive.google.com/drive/folders/1LsLoub7SrguFOHf5Q-AGTuHWQX7I0Gwl?usp=sharing"
+# insert the shareable URL of a Drive folder to download
+url = ""
 gdown.download_folder(url)

@@ -7,7 +7,6 @@ python -m pip install -e '.[dev]'
 echo "Install pre-commit ..."
 pre-commit install
 
-# echo "CUSTOM_DATA_PATH=custom_data" >> .env
 export CUSTOM_DATA_PATH=custom_data
 
 # Define the URLs for the files to download
@@ -31,9 +30,6 @@ echo "Files have been downloaded to $DEST_DIR"
 
 echo "Merge data ..."
 python -m merge_data
-
-# echo "Download Finetuned Models ..."
-# python -m download_models
 
 # Execute a Python command-line tool or script
 echo "Running Python command ..."
