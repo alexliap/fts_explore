@@ -1,3 +1,4 @@
+import logging
 import os
 
 import numpy as np
@@ -5,7 +6,6 @@ import pandas as pd
 from gluonts.dataset.pandas import PandasDataset
 from gluonts.dataset.split import TestData, split
 from gluonts.ev.metrics import MAE, MAPE
-
 from uni2ts.eval_util.evaluation import evaluate_model
 from uni2ts.model.moirai import MoiraiForecast, MoiraiModule
 
@@ -221,8 +221,8 @@ def get_metrics_v2(
             metrics["lower_0025"].append(lower_error_ts)
             metrics["upper_0975"].append(upper_error_ts)
 
-        except:
-            pass
+        except Exception as e:
+            logging.error(e)
 
     return metrics
 
@@ -258,7 +258,7 @@ def get_metrics(
             )
 
             models_perf.append(model_metrics)
-        except:
-            pass
+        except Exception as e:
+            logging.error(e)
 
     return models_perf

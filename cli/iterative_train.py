@@ -10,8 +10,6 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, open_dict
 from torch.utils._pytree import tree_map
 from torch.utils.data import Dataset, DistributedSampler
-
-from uni2ts.common import hydra_util
 from uni2ts.data.builder.simple import SimpleDatasetBuilder, SimpleEvalDatasetBuilder
 from uni2ts.data.loader import DataLoader
 

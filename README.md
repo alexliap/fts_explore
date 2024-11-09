@@ -17,4 +17,3 @@
   - [ ] For Stage 2, also perform iterative training of the pretrained model in order to test the hypothesis
   - [x] Experiment with different ways of evaluation/visualization
     - [x] Get forecasts and targets, in order to calculate whichever metric
-

@@ -2,7 +2,7 @@
 
 # in order to be able to run the script first run "chmod +x download_data.sh"
 
-python -m pip install -e '.[notebook, alex]'
+python -m pip install -e '.[dev]'
 
 echo "Install pre-commit ..."
 pre-commit install
