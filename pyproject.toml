@@ -8,7 +8,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "salesforce-uni2ts@git+https://github.com/SalesforceAIResearch/uni2ts.git@1.1.0",
+  "uni2ts@git+https://github.com/SalesforceAIResearch/uni2ts.git@2ba614de8878d350c62835c942b450d2f4d5a711",
 ]
 
 requires-python = ">=3.10"
