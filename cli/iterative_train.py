@@ -24,7 +24,7 @@ def make_val_yaml(dataset_name: str, offset: int, context_length: int = 720):
             "_target_": "uni2ts.data.builder.simple.generate_eval_builders",
             "dataset": dataset_name,
             "offset": offset,
-            "eval_length": 4320,
+            "eval_length": offset,
             "prediction_lengths": [168, 336, 504, 720],
             "context_lengths": [context_length],
             "patch_sizes": [32, 64],
@@ -187,7 +187,7 @@ def main(cfg: DictConfig):
     ).build_dataset(file=cfg.dataset_path, dataset_type="wide", freq="H")
 
     # create backtesting with refit loop
-    for i in range(30, num_of_weeks + 1, iter_step):
+    for i in range(1, num_of_weeks + 1, iter_step):
         # same with train size
         offset = i * (7 * 24)
 
@@ -197,8 +197,8 @@ def main(cfg: DictConfig):
             if cfg.thorough_train:
                 cfg.trainer.max_epochs = i
                 cfg.trainer.callbacks[2]["patience"] = int(i / 2)
-                cfg.model.module_kwargs.attn_dropout_p = 0.2
-                cfg.model.module_kwargs.dropout_p = 0.2
+                # cfg.model.module_kwargs.attn_dropout_p = 0.2
+                # cfg.model.module_kwargs.dropout_p = 0.2
 
             # get model from previous training iteration
             if cfg.refit and i > 1:
@@ -216,11 +216,11 @@ def main(cfg: DictConfig):
                 cfg.model_dirpath, cfg.dataset
             )
             logging.info(cfg.trainer.callbacks[1]["dirpath"])
-            # make validation dataset
+            # modify validation dataset
             cfg.val_data = make_val_yaml(
                 dataset_name=cfg.val_dataset_name, offset=offset
             )
-
+            # modify train dataloader
             cfg.train_dataloader.batch_size = batch_size
             cfg.train_dataloader.batch_size_factor = batch_size_factor
             cfg.train_dataloader.num_batches_per_epoch = int(
@@ -232,14 +232,12 @@ def main(cfg: DictConfig):
         if cfg.compile:
             model.module.compile(mode=cfg.compile)
 
-        # print(cfg)
-        # break
-
         # load train dataset
         train_dataset = SimpleDatasetBuilder(
             dataset=f"{cfg.train_dataset_name}_{i}", weight=1000
         ).load_dataset(model.train_transform_map)
         # load validation dataset
+
         val_dataset = (
             tree_map(
                 lambda ds: ds.load_dataset(model.val_transform_map),
