@@ -6,6 +6,7 @@ from typing import Callable, Optional
 import hydra
 import lightning
 import torch
+from dotenv import load_dotenv
 from hydra.utils import instantiate
 from omegaconf import DictConfig, open_dict
 from torch.utils._pytree import tree_map
@@ -14,7 +15,9 @@ from uni2ts.data.builder.simple import SimpleDatasetBuilder, SimpleEvalDatasetBu
 from uni2ts.data.loader import DataLoader
 
 
-def make_val_yaml(dataset_name: str, offset: int, context_length: int = 720):
+def make_val_yaml(
+    dataset_name: str, offset: int, eval_length: int, context_length: int = 720
+):
     if offset < context_length:
         context_length = offset
 
@@ -24,10 +27,11 @@ def make_val_yaml(dataset_name: str, offset: int, context_length: int = 720):
             "_target_": "uni2ts.data.builder.simple.generate_eval_builders",
             "dataset": dataset_name,
             "offset": offset,
-            "eval_length": offset,
+            "eval_length": eval_length,
             "prediction_lengths": [168, 336, 504, 720],
             "context_lengths": [context_length],
             "patch_sizes": [32, 64],
+            "storage_path": os.getenv("CUSTOM_DATA_PATH"),
         },
     }
 
@@ -158,6 +162,10 @@ class DataModule(lightning.LightningDataModule):
     version_base="1.3", config_path="cli/conf/finetune/", config_name="default.yaml"
 )
 def main(cfg: DictConfig):
+    load_dotenv()
+
+    storage_path = os.getenv("CUSTOM_DATA_PATH")
+
     if cfg.tf32:
         assert cfg.trainer.precision == 32
         torch.backends.cuda.matmul.allow_tf32 = True
@@ -172,7 +180,9 @@ def main(cfg: DictConfig):
     for i in range(1, num_of_weeks + 1, iter_step):
         train_size = i * (7 * 24)
 
-        SimpleDatasetBuilder(dataset=f"{cfg.train_dataset_name}_{i}").build_dataset(
+        SimpleDatasetBuilder(
+            dataset=f"{cfg.train_dataset_name}_{i}", storage_path=storage_path
+        ).build_dataset(
             offset=train_size, dataset_type="wide", file=cfg.dataset_path, freq="H"
         )
 
@@ -184,12 +194,14 @@ def main(cfg: DictConfig):
         prediction_length=None,
         context_length=None,
         patch_size=None,
+        storage_path=storage_path,
     ).build_dataset(file=cfg.dataset_path, dataset_type="wide", freq="H")
 
     # create backtesting with refit loop
     for i in range(1, num_of_weeks + 1, iter_step):
         # same with train size
         offset = i * (7 * 24)
+        eval_length = (num_of_weeks - i) * (7 * 24) + 4320
 
         batch_size, batch_size_factor = calculate_batch_variables(cfg, offset=offset)
 
@@ -197,8 +209,6 @@ def main(cfg: DictConfig):
             if cfg.thorough_train:
                 cfg.trainer.max_epochs = i
                 cfg.trainer.callbacks[2]["patience"] = int(i / 2)
-                # cfg.model.module_kwargs.attn_dropout_p = 0.2
-                # cfg.model.module_kwargs.dropout_p = 0.2
 
             # get model from previous training iteration
             if cfg.refit and i > 1:
@@ -218,7 +228,9 @@ def main(cfg: DictConfig):
             logging.info(cfg.trainer.callbacks[1]["dirpath"])
             # modify validation dataset
             cfg.val_data = make_val_yaml(
-                dataset_name=cfg.val_dataset_name, offset=offset
+                dataset_name=cfg.val_dataset_name,
+                offset=offset,
+                eval_length=eval_length,
             )
             # modify train dataloader
             cfg.train_dataloader.batch_size = batch_size
@@ -234,10 +246,12 @@ def main(cfg: DictConfig):
 
         # load train dataset
         train_dataset = SimpleDatasetBuilder(
-            dataset=f"{cfg.train_dataset_name}_{i}", weight=1000
+            dataset=f"{cfg.train_dataset_name}_{i}",
+            weight=1000,
+            storage_path=storage_path,
         ).load_dataset(model.train_transform_map)
-        # load validation dataset
 
+        # load validation dataset
         val_dataset = (
             tree_map(
                 lambda ds: ds.load_dataset(model.val_transform_map),

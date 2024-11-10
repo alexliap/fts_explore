@@ -7,3 +7,4 @@ _args_:
   prediction_lengths: [168, 336, 504, 720] # 1 week, 2 weeks, 3 weeks, 1 month
   context_lengths: [168, 336, 504, 720] # 1 week, 2 weeks, 3 weeks, 1 month, 2 months, 3 months
   patch_sizes: [32, 64]
+  storage_path: null
