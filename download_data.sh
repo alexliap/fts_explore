@@ -7,6 +7,9 @@ python -m pip install -e '.[dev]'
 echo "Install pre-commit ..."
 pre-commit install
 
+# daclare env variable for later usage in the bash script
+# and make .env for usage in the training scripts
+echo "CUSTOM_DATA_PATH=custom_data" >> .env
 export CUSTOM_DATA_PATH=custom_data
 
 # Define the URLs for the files to download
