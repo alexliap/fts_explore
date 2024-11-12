@@ -5,7 +5,7 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: load_data
   - _self_
-run_name: null
+run_name: dummy
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
@@ -42,13 +42,13 @@ trainer:
   check_val_every_n_epoch: 1
   logger:
       _target_: lightning.pytorch.loggers.TensorBoardLogger
-      save_dir: custom_data # ${hydra:runtime.output_dir}
+      save_dir: ${hydra:runtime.output_dir}
       name: logs
   callbacks:
     - _target_: lightning.pytorch.callbacks.LearningRateMonitor
       logging_interval: epoch
     - _target_: lightning.pytorch.callbacks.ModelCheckpoint
-      dirpath: null
+      dirpath: ${hydra:runtime.output_dir}/checkpoints
       monitor: val/PackedMSELoss
       save_weights_only: true
       mode: min
@@ -61,7 +61,7 @@ trainer:
       mode: min
       strict: false
       verbose: true
-  max_epochs: 1
+  max_epochs: 3
   enable_progress_bar: true
   accumulate_grad_batches: 1
   gradient_clip_val: 1.0

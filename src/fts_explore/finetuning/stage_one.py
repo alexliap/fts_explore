@@ -5,6 +5,7 @@ import lightning as L
 import torch
 from hydra import compose, initialize
 from hydra.utils import instantiate
+from omegaconf import DictConfig
 from torch.utils._pytree import tree_map
 from torch.utils.data import Dataset
 from uni2ts.common import hydra_util
@@ -13,18 +14,20 @@ from fts_explore.data_module import DataModule
 
 
 class StageOneFinetuning:
-    def __init__(self, cfg_path: str, cfg_name: str):
+    def __init__(self, cfg: DictConfig, cfg_path: str, cfg_name: str):
         logging.info(
             f"Loading configuration file at {cfg_path} with name {cfg_name} ..."
         )
 
-        with initialize(version_base="1.3", config_path=cfg_path):
-            # Load and compose the configuration
-            self.cfg = compose(config_name=cfg_name)
+        # with initialize(version_base="1.3", config_path=cfg_path):
+        #     # Load and compose the configuration
+        #     self.cfg = compose(config_name=cfg_name)
 
         logging.info(
             f"Configuration file at {cfg_path} with name {cfg_name} successfully loaded ..."
         )
+
+        self.cfg = cfg
 
         self.cfg_path = cfg_path
         self.cfg_name = cfg_name
