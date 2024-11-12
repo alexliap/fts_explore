@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 from typing import Optional
 
 import lightning as L
@@ -14,7 +13,7 @@ from fts_explore.data_module import DataModule
 
 
 class StageOneFinetuning:
-    def __init__(self, cfg_path: str, cfg_name: str, storage_path: str):
+    def __init__(self, cfg_path: str, cfg_name: str):
         logging.info(
             f"Loading configuration file at {cfg_path} with name {cfg_name} ..."
         )
@@ -26,8 +25,6 @@ class StageOneFinetuning:
         logging.info(
             f"Configuration file at {cfg_path} with name {cfg_name} successfully loaded ..."
         )
-
-        self.storage_path = Path(storage_path)
 
         self.cfg_path = cfg_path
         self.cfg_name = cfg_name
