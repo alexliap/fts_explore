@@ -3,34 +3,21 @@ from typing import Optional
 
 import lightning as L
 import torch
+from dotenv import load_dotenv
 from hydra import compose, initialize
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 from torch.utils._pytree import tree_map
 from torch.utils.data import Dataset
 from uni2ts.common import hydra_util
+from uni2ts.data.builder.simple import SimpleEvalDatasetBuilder
 
 from fts_explore.data_module import DataModule
 
 
 class StageOneFinetuning:
-    def __init__(self, cfg: DictConfig, cfg_path: str, cfg_name: str):
-        logging.info(
-            f"Loading configuration file at {cfg_path} with name {cfg_name} ..."
-        )
-
-        # with initialize(version_base="1.3", config_path=cfg_path):
-        #     # Load and compose the configuration
-        #     self.cfg = compose(config_name=cfg_name)
-
-        logging.info(
-            f"Configuration file at {cfg_path} with name {cfg_name} successfully loaded ..."
-        )
-
+    def __init__(self, cfg: DictConfig):
         self.cfg = cfg
-
-        self.cfg_path = cfg_path
-        self.cfg_name = cfg_name
 
         self.model = None
         self.train_dataset = None
@@ -70,21 +57,7 @@ class StageOneFinetuning:
             torch.backends.cuda.matmul.allow_tf32 = True
             torch.backends.cudnn.allow_tf32 = True
 
-        # init Model
-        self.model: L.LightningModule = instantiate(self.cfg.model, _convert_="all")
-        logging.info("Model Created ...")
-
-        # freeze everything
-        self.model.freeze()
-
-        # unfreeze last encoder layer
-        for param in self.model.module.encoder.layers[-1].parameters():
-            param.requires_grad = True
-
-        for param in self.model.module.param_proj.parameters():
-            param.requires_grad = True
-
-        logging.info("Freezed necessary layers ...")
+        self._prepare_model()
 
         if self.cfg.compile:
             self.model.module.compile(mode=self.cfg.compile)
@@ -111,3 +84,20 @@ class StageOneFinetuning:
         logging.info("Trainer initialized ...")
 
         L.seed_everything(self.cfg.seed + self.trainer.logger.version, workers=True)
+
+    def _prepare_model(self):
+        # init Model
+        self.model: L.LightningModule = instantiate(self.cfg.model, _convert_="all")
+        logging.info("Model Created ...")
+
+        # freeze everything
+        self.model.freeze()
+
+        # unfreeze last encoder layer
+        for param in self.model.module.encoder.layers[-1].parameters():
+            param.requires_grad = True
+
+        for param in self.model.module.param_proj.parameters():
+            param.requires_grad = True
+
+        logging.info("Freezed necessary layers ...")
