@@ -30,6 +30,8 @@ dev = [
   "matplotlib",
   "gdown",
   "pyright",
+  "azure-storage-blob",
+  "azure-identity"
 ]
 
 [tool.hatch.version]
