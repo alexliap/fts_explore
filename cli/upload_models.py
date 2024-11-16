@@ -1,8 +1,7 @@
 # After syncing the vast.ai machine with the GDrive upload everything to Azure Blob Storage
 import os
 
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient, ContainerClient
+from azure.storage.blob import BlobServiceClient
 
 # TODO: Replace <storage-account-name> with your actual storage account name
 account_url = ""
