@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# in order to be able to run the script first run "chmod +x download_data.sh"
+# in order to be able to run the script first run "chmod +x make_env.sh"
 
 curl -LsSf https://astral.sh/uv/install.sh | sh
+
+source $HOME/.local/bin/env
 
 uv venv -p 3.11
 

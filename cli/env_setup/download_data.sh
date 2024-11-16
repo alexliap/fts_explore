@@ -22,6 +22,7 @@ curl -o "$DEST_DIR/load_values_24.csv" "$FILE_URL_2"
 echo "Files have been downloaded to $DEST_DIR"
 
 echo "Merge data ..."
+source .venv/bin/activate
 python -m merge_data
 
 # # Execute a Python command-line tool or script
