@@ -31,7 +31,8 @@ dev = [
   "gdown",
   "pyright",
   "azure-storage-blob",
-  "azure-identity"
+  "azure-identity",
+  "loguru"
 ]
 
 [tool.hatch.version]

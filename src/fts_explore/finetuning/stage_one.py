@@ -1,16 +1,13 @@
-import logging
 from typing import Optional
 
 import lightning as L
 import torch
-from dotenv import load_dotenv
-from hydra import compose, initialize
 from hydra.utils import instantiate
+from loguru import logger
 from omegaconf import DictConfig
 from torch.utils._pytree import tree_map
 from torch.utils.data import Dataset
 from uni2ts.common import hydra_util
-from uni2ts.data.builder.simple import SimpleEvalDatasetBuilder
 
 from fts_explore.data_module import DataModule
 
@@ -24,9 +21,12 @@ class StageOneFinetuning:
         self.val_dataset = None
         self.trainer = None
 
+        logger.info("Starting stage 2 of the process ...")
+        logger.info(self.cfg)
+
         self._build_datasets()
 
-        logging.info("Built train and validations sets ...")
+        logger.info("Built train and validations sets ...")
 
         self._prepare_training_vars()
 
@@ -66,7 +66,7 @@ class StageOneFinetuning:
         self.train_dataset: Dataset = instantiate(self.cfg.train_dataset).load_dataset(
             self.model.train_transform_map
         )
-        logging.info("Created train dataset ...")
+        logger.info("Created train dataset ...")
 
         # load validation dataset
         self.val_dataset: Optional[Dataset | list[Dataset]] = (
@@ -77,18 +77,18 @@ class StageOneFinetuning:
             if "val_data" in self.cfg
             else None
         )
-        logging.info("Created validation dataset ...")
+        logger.info("Created validation dataset ...")
 
         # init Trainer
         self.trainer: L.Trainer = instantiate(self.cfg.trainer)
-        logging.info("Trainer initialized ...")
+        logger.info("Trainer initialized ...")
 
-        L.seed_everything(self.cfg.seed + self.trainer.logger.version, workers=True)
+        L.seed_everything(self.cfg.seed, workers=True)
 
     def _prepare_model(self):
         # init Model
         self.model: L.LightningModule = instantiate(self.cfg.model, _convert_="all")
-        logging.info("Model Created ...")
+        logger.info("Model Created ...")
 
         # freeze everything
         self.model.freeze()
@@ -100,4 +100,4 @@ class StageOneFinetuning:
         for param in self.model.module.param_proj.parameters():
             param.requires_grad = True
 
-        logging.info("Freezed necessary layers ...")
+        logger.info("Freezed necessary layers ...")

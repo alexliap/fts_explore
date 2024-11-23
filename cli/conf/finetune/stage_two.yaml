@@ -1,0 +1,117 @@
+hydra:
+  run:
+    dir: outputs/finetune/${hydra:runtime.choices.model}/${run_name}
+defaults:
+  - model: moirai_1.0_R_small
+  # - data: null
+  - val_data: default
+  - _self_
+run_name: null
+seed: 0
+tf32: true
+compile: false  # set to mode: default, reduce-overhead, max-autotune
+storage_path: custom_data
+#### Iterative training arguments ####
+time_steps: 52
+time_step_size: 168
+iter_step: 1
+max_context_length: 720
+eval_buffer: 4320 # data points that are only going to be used for evaluation |
+# for it to work data shape >= biggest train_size + eval_buffer
+refit: true
+######################################
+
+train_dataset:
+  _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
+  dataset: null
+  storage_path: ${storage_path}
+  weight: 1000
+
+validation_dataset:
+  _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
+  dataset: it_load_data_eval
+  storage_path: ${storage_path}
+  # these should remain None as per the authors instructions
+  offset: null
+  windows: null
+  distance: null
+  prediction_length: null
+  context_length: null
+  patch_size: null
+
+dataset_path: data/it_load_data_23_24.csv
+train_dataset_name: it_load_data_train
+model_dirpath: ${hydra:runtime.output_dir}/checkpoints/
+trainer:
+  _target_: lightning.Trainer
+  accelerator: gpu
+  strategy: auto
+  devices: -1
+  num_nodes: 1
+  precision: 32
+  num_sanity_val_steps: 0
+  check_val_every_n_epoch: 1
+  logger:
+      _target_: lightning.pytorch.loggers.TensorBoardLogger
+      save_dir: ${hydra:runtime.output_dir}
+      name: logs
+  callbacks:
+    - _target_: lightning.pytorch.callbacks.LearningRateMonitor
+      logging_interval: epoch
+    - _target_: lightning.pytorch.callbacks.ModelCheckpoint
+      dirpath: null
+      monitor: val/PackedMSELoss
+      save_weights_only: true
+      mode: min
+      save_top_k: 1
+      every_n_epochs: 1
+    - _target_: lightning.pytorch.callbacks.EarlyStopping
+      monitor: val/PackedMSELoss
+      min_delta: 1000
+      patience: 1
+      mode: min
+      strict: false
+      verbose: true
+  max_epochs: 1
+  enable_progress_bar: true
+  accumulate_grad_batches: 1
+  gradient_clip_val: 1.0
+  gradient_clip_algorithm: norm
+train_dataloader:
+  _target_: uni2ts.data.loader.DataLoader
+  batch_size: 8
+  batch_size_factor: 1
+  cycle: true
+  num_batches_per_epoch: 1
+  shuffle: true
+  num_workers: 0
+  collate_fn:
+    _target_: uni2ts.data.loader.PackCollate
+    max_length: ${model.module_kwargs.max_seq_len}
+    seq_fields: ${cls_getattr:${model._target_},seq_fields}
+    pad_func_map: ${cls_getattr:${model._target_},pad_func_map}
+  pin_memory: true
+  drop_last: false
+  fill_last: false
+  worker_init_fn: null
+  prefetch_factor: 2
+  persistent_workers: true
+val_dataloader:
+  _target_: uni2ts.data.loader.DataLoader
+  batch_size: 64
+  batch_size_factor: 40
+  cycle: false
+  num_batches_per_epoch: null
+  shuffle: false
+  num_workers: 0
+  collate_fn:
+    _target_: uni2ts.data.loader.PackCollate
+    max_length: ${model.module_kwargs.max_seq_len}
+    seq_fields: ${cls_getattr:${model._target_},seq_fields}
+    pad_func_map: ${cls_getattr:${model._target_},pad_func_map}
+  pin_memory: false
+  drop_last: false
+  fill_last: true
+  worker_init_fn: null
+  prefetch_factor: 2
+  persistent_workers: true
