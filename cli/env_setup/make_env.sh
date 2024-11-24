@@ -15,6 +15,9 @@ uv pip install -e '.[dev]'
 echo "Install pre-commit ..."
 pre-commit install
 
+echo "Make necessary kernel for Jupyter to use ..."
+python -m ipykernel install --user --name=fts_explore
+
 
 echo "Configure Git User email ..."
 git config --global user.email "alexandrosliapates@gmail.com"
