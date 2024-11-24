@@ -4,6 +4,8 @@
 
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
+echo "CUSTOM_DATA_PATH=finetune_data" >> .env
+
 source $HOME/.local/bin/env
 
 uv venv -p 3.11

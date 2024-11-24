@@ -1,9 +1,9 @@
 _target_: uni2ts.data.builder.ConcatDatasetBuilder
 _args_:
   _target_: uni2ts.data.builder.simple.generate_eval_builders
-  # dataset: gr_load_data_eval_test
-  # offset: 4320
-  # eval_length: 4320
+  dataset: gr_load_data_eval
+  offset: 8760
+  eval_length: 4320
   prediction_lengths: [168, 336, 504, 720] # 1 week, 2 weeks, 3 weeks, 1 month
-  context_lengths: 720 # 1 month
+  context_lengths: [720] # 1 month
   patch_sizes: [32, 64]

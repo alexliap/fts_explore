@@ -3,9 +3,9 @@ hydra:
     dir: outputs/finetune/${hydra:runtime.choices.model}/${run_name}
 defaults:
   - model: moirai_1.0_R_small
-  - val_data: load_data
+  - val_data: default_stage_one
   - _self_
-run_name: dummy
+run_name: null
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
@@ -15,14 +15,12 @@ dataset_path: data/gr_load_data_23_24.csv
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
-  dataset: gr_load_data_test
-  storage_path: custom_data
+  dataset: gr_load_data
   weight: 1000
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: gr_load_data_eval_test
-  storage_path: custom_data
+  dataset: gr_load_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -33,7 +31,7 @@ validation_dataset:
 
 trainer:
   _target_: lightning.Trainer
-  accelerator: cpu
+  accelerator: gpu
   strategy: auto
   devices: 1
   num_nodes: 1
@@ -57,11 +55,11 @@ trainer:
     - _target_: lightning.pytorch.callbacks.EarlyStopping
       monitor: val/PackedMSELoss
       min_delta: 1000
-      patience: 1
+      patience: 20
       mode: min
       strict: false
       verbose: true
-  max_epochs: 3
+  max_epochs: 2
   enable_progress_bar: true
   accumulate_grad_batches: 1
   gradient_clip_val: 1.0
@@ -69,12 +67,12 @@ trainer:
 
 train_dataloader:
   _target_: uni2ts.data.loader.DataLoader
-  batch_size: 8
-  batch_size_factor: 1
+  batch_size: 256
+  batch_size_factor: 20
   cycle: true
-  num_batches_per_epoch: 5
+  num_batches_per_epoch: 20
   shuffle: true
-  num_workers: 0
+  num_workers: 8
   collate_fn:
     _target_: uni2ts.data.loader.PackCollate
     max_length: ${model.module_kwargs.max_seq_len}
@@ -89,12 +87,12 @@ train_dataloader:
 
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
-  batch_size: 64
-  batch_size_factor: 40
+  batch_size: 128
+  batch_size_factor: 34
   cycle: false
   num_batches_per_epoch: null
   shuffle: false
-  num_workers: 0
+  num_workers: 4
   collate_fn:
     _target_: uni2ts.data.loader.PackCollate
     max_length: ${model.module_kwargs.max_seq_len}

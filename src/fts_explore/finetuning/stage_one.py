@@ -46,6 +46,11 @@ class StageOneFinetuning:
             freq="H",
         )
 
+        if self.cfg.validation_dataset.dataset != self.cfg.val_data._args_.dataset:
+            raise ValueError(
+                "Dataset name in validation_dataset and val_data must be the same."
+            )
+
         # build validation dataset
         instantiate(self.cfg.validation_dataset).build_dataset(
             dataset_type="wide", file=self.cfg.dataset_path, freq="H"
