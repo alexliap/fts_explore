@@ -34,16 +34,23 @@ class StageTwoFinetuning:
         if self.cfg.refit and self.cfg.thorough:
             raise RuntimeError("refit and thorough arguents can't be both True.")
 
+        if self.cfg.tf32:
+            assert self.cfg.trainer.precision == 32
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
+
         # iterative train loop
         for i in range(1, self.cfg.time_steps + 1, self.cfg.iter_step):
             train_dataset, val_dataset = self._prepare_training_vars(counter=i)
 
-            # # init Trainer
-            # trainer: L.Trainer = instantiate(self.cfg.trainer)
+            # init Trainer
+            trainer: L.Trainer = instantiate(self.cfg.trainer)
 
-            # trainer.fit(self.model, datamodule=DataModule(self.cfg, train_dataset, val_dataset))
+            trainer.fit(
+                self.model, datamodule=DataModule(self.cfg, train_dataset, val_dataset)
+            )
 
-            # del self.model, train_dataset, val_dataset, trainer
+            del self.model, train_dataset, val_dataset, trainer
 
     def _build_datasets(self) -> None:
         # build train & validation sets
@@ -82,7 +89,7 @@ class StageTwoFinetuning:
         logger.info("Freezed necessary layers ...")
 
     def _prepare_training_vars(self, counter: int):
-        if self.cfg.thorough_train:
+        if self.cfg.thorough:
             self.cfg.trainer.max_epochs = counter
             self.cfg.trainer.callbacks[2]["patience"] = int(counter / 2)
 
@@ -139,7 +146,7 @@ class StageTwoFinetuning:
         # caclulate correct batch_size_factor
         batch_size_factor = offset / max_batch_size
 
-        if self.cfg.thorough_train:
+        if self.cfg.thorough:
             batch_size_factor = batch_size_factor / 2
 
         with open_dict(self.cfg):

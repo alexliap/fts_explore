@@ -59,7 +59,7 @@ trainer:
       mode: min
       strict: false
       verbose: true
-  max_epochs: 2
+  max_epochs: 1
   enable_progress_bar: true
   accumulate_grad_batches: 1
   gradient_clip_val: 1.0
@@ -72,7 +72,7 @@ train_dataloader:
   cycle: true
   num_batches_per_epoch: 20
   shuffle: true
-  num_workers: 8
+  num_workers: 0
   collate_fn:
     _target_: uni2ts.data.loader.PackCollate
     max_length: ${model.module_kwargs.max_seq_len}
@@ -87,12 +87,12 @@ train_dataloader:
 
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
-  batch_size: 128
-  batch_size_factor: 34
+  batch_size: 64
+  batch_size_factor: 68
   cycle: false
   num_batches_per_epoch: null
   shuffle: false
-  num_workers: 4
+  num_workers: 0
   collate_fn:
     _target_: uni2ts.data.loader.PackCollate
     max_length: ${model.module_kwargs.max_seq_len}
