@@ -31,6 +31,9 @@ class StageTwoFinetuning:
         logger.info("Built train and validations sets ...")
 
     def fit(self):
+        if self.cfg.refit and self.cfg.thorough:
+            raise RuntimeError("refit and thorough arguents can't be both True.")
+
         # iterative train loop
         for i in range(1, self.cfg.time_steps + 1, self.cfg.iter_step):
             train_dataset, val_dataset = self._prepare_training_vars(counter=i)
@@ -79,6 +82,10 @@ class StageTwoFinetuning:
         logger.info("Freezed necessary layers ...")
 
     def _prepare_training_vars(self, counter: int):
+        if self.cfg.thorough_train:
+            self.cfg.trainer.max_epochs = counter
+            self.cfg.trainer.callbacks[2]["patience"] = int(counter / 2)
+
         self._update_validation_params(counter)
 
         self._calculate_batch_variables(counter)
@@ -131,6 +138,9 @@ class StageTwoFinetuning:
 
         # caclulate correct batch_size_factor
         batch_size_factor = offset / max_batch_size
+
+        if self.cfg.thorough_train:
+            batch_size_factor = batch_size_factor / 2
 
         with open_dict(self.cfg):
             # modify train dataloader

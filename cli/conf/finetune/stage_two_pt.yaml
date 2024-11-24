@@ -18,7 +18,8 @@ iter_step: 1
 max_context_length: 720
 eval_buffer: 4320 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
-refit: true
+refit: false
+thorough: true
 ######################################
 
 train_dataset:

@@ -14,7 +14,9 @@ from fts_explore.finetuning.stage_two import StageTwoFinetuning
 
 
 @hydra.main(
-    version_base="1.3", config_path="cli/conf/finetune/", config_name="stage_two.yaml"
+    version_base="1.3",
+    config_path="cli/conf/finetune/",
+    config_name="stage_two_ft.yaml",
 )
 def main(cfg: DictConfig):
     stage_two = StageTwoFinetuning(cfg=cfg)
