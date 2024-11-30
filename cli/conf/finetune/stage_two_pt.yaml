@@ -1,20 +1,20 @@
 hydra:
   run:
-    dir: outputs/finetune/${hydra:runtime.choices.model}/${run_name}
+    dir: outputs/finetune/${run_name}
 defaults:
   - model: moirai_1.0_R_small
-  # - data: null
-  - val_data: default
+  - val_data: default_stage_two
   - _self_
-run_name: null
+run_name: stage_two_pt
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
-storage_path: custom_data
+dataset_path: data/it_load_data_23_24.csv
+train_dataset_name: it_load_data_train
 #### Iterative training arguments ####
-time_steps: 52
+time_steps: 11
 time_step_size: 168
-iter_step: 1
+iter_step: 5
 max_context_length: 720
 eval_buffer: 4320 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
@@ -25,13 +25,11 @@ thorough: true
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
   dataset: null
-  storage_path: ${storage_path}
   weight: 1000
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
   dataset: it_load_data_eval
-  storage_path: ${storage_path}
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -40,14 +38,12 @@ validation_dataset:
   context_length: null
   patch_size: null
 
-dataset_path: data/it_load_data_23_24.csv
-train_dataset_name: it_load_data_train
 model_dirpath: ${hydra:runtime.output_dir}/checkpoints/
 trainer:
   _target_: lightning.Trainer
   accelerator: gpu
   strategy: auto
-  devices: -1
+  devices: 1
   num_nodes: 1
   precision: 32
   num_sanity_val_steps: 0

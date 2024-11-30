@@ -32,6 +32,4 @@ beta1: 0.9
 beta2: 0.98
 num_training_steps: ${mul:${trainer.max_epochs},${train_dataloader.num_batches_per_epoch}}
 num_warmup_steps: 0
-
-stage_one_conf: stage_one
-checkpoint_path: ${stage_one_conf.run_name} # outputs/finetune/moirai_1.0_R_small/None/checkpoints/epoch=0-step=20.ckpt
+checkpoint_path: outputs/finetune/stage_one/checkpoints/stage_one.ckpt

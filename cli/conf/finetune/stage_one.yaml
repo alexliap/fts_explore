@@ -2,10 +2,10 @@ hydra:
   run:
     dir: outputs/finetune/${run_name}
 defaults:
-  - run_name:
   - model: moirai_1.0_R_small
   - val_data: default_stage_one
   - _self_
+run_name: stage_one
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
@@ -49,6 +49,7 @@ trainer:
       dirpath: ${hydra:runtime.output_dir}/checkpoints
       monitor: val/PackedMSELoss
       save_weights_only: true
+      filename: stage_one
       mode: min
       save_top_k: 1
       every_n_epochs: 1
@@ -70,7 +71,7 @@ train_dataloader:
   batch_size: 256
   batch_size_factor: 20
   cycle: true
-  num_batches_per_epoch: 20
+  num_batches_per_epoch: 2
   shuffle: true
   num_workers: 0
   collate_fn:

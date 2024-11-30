@@ -159,7 +159,7 @@ class StageTwoFinetuning:
 
     def _change_checkpoint_path(self, counter: int):
         with open_dict(self.cfg):
-            if counter > 1:
+            if self.cfg.refit and counter > 1:
                 prev_model = os.listdir(self.cfg.trainer.callbacks[1]["dirpath"])[0]
                 logger.info(
                     f"Loading checkpoint from {self.cfg.trainer.callbacks[1]['dirpath']}"
