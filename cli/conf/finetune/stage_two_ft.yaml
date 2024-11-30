@@ -1,11 +1,11 @@
 hydra:
   run:
-    dir: outputs/finetune/${hydra:runtime.choices.model}/${run_name}
+    dir: outputs/finetune/${run_name}
 defaults:
+  - run_name: null
   - model: moirai_small
   - val_data: default
   - _self_
-run_name: null
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
