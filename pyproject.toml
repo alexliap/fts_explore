@@ -32,7 +32,8 @@ dev = [
   "pyright",
   "azure-storage-blob",
   "azure-identity",
-  "loguru"
+  "loguru",
+  "yfinance"
 ]
 
 [tool.hatch.version]

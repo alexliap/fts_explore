@@ -2,6 +2,8 @@
 
 # in order to be able to run the script first run "chmod +x download_data.sh"
 
+echo "Downloading Load data ..."
+
 # Define the URLs for the files to download
 FILE_URL_1="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/Statistics/2023/monthly_hourly_load_values_2023.csv"
 FILE_URL_2="https://eepublicdownloads.blob.core.windows.net/public-cdn-container/clean-documents/Publications/Statistics/2024/monthly_hourly_load_values_2024.csv"
@@ -25,8 +27,5 @@ echo "Merge data ..."
 source .venv/bin/activate
 python -m merge_data
 
-# # Execute a Python command-line tool or script
-# echo "Running Python command ..."
-# python -m uni2ts.data.builder.simple gr_load_data data/gr_load_data_23_24.csv --dataset_type wide --date_offset '2024-01-01 00:00:00'
-# # Inform the user that the Python command has been executed
-# echo "Python command executed successfully."
+echo "Downloading Crypto data ..."
+python -m cli.download_crypto_data --dir $DEST_DIR
