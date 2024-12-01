@@ -1,10 +1,11 @@
 from typing import Optional
 
 import lightning as L
+import pandas as pd
 import torch
 from hydra.utils import instantiate
 from loguru import logger
-from omegaconf import DictConfig
+from omegaconf import DictConfig, open_dict
 from torch.utils._pytree import tree_map
 from torch.utils.data import Dataset
 from uni2ts.common import hydra_util
@@ -67,6 +68,8 @@ class StageOneFinetuning:
         if self.cfg.compile:
             self.model.module.compile(mode=self.cfg.compile)
 
+        self._edit_patience_delta()
+
         # load train dataset
         self.train_dataset: Dataset = instantiate(self.cfg.train_dataset).load_dataset(
             self.model.train_transform_map
@@ -106,3 +109,15 @@ class StageOneFinetuning:
             param.requires_grad = True
 
         logger.info("Freezed necessary layers ...")
+
+    def _edit_patience_delta(self):
+        dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
+        data_mean = dataset.mean().item()
+        delta = data_mean * 0.1
+        if delta > 1000:
+            delta = 1000
+        with open_dict(self.cfg):
+            self.cfg.trainer.callbacks[2]["min_delta"] = delta
+            logger.info(
+                f"Patience min_delta equals to {self.cfg.trainer.callbacks[2]['min_delta']}"
+            )

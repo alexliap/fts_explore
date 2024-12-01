@@ -2,6 +2,7 @@ import os
 from typing import Optional
 
 import lightning as L
+import pandas as pd
 import torch
 from hydra.utils import instantiate
 from loguru import logger
@@ -38,6 +39,8 @@ class StageTwoFinetuning:
             assert self.cfg.trainer.precision == 32
             torch.backends.cuda.matmul.allow_tf32 = True
             torch.backends.cudnn.allow_tf32 = True
+
+        self._edit_patience_delta()
 
         # iterative train loop
         for i in range(1, self.cfg.time_steps + 1, self.cfg.iter_step):
@@ -174,3 +177,13 @@ class StageTwoFinetuning:
                 self.cfg.model_dirpath, self.cfg.dataset
             )
             logger.info(self.cfg.trainer.callbacks[1]["dirpath"])
+
+    def _edit_patience_delta(self):
+        dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
+        data_mean = dataset.mean().item()
+        delta = data_mean * 0.1
+        with open_dict(self.cfg):
+            self.cfg.trainer.callbacks[2]["min_delta"] = delta
+            logger.info(
+                f"Patience min_delta equals to {self.cfg.trainer.callbacks[2]['min_delta']}"
+            )
