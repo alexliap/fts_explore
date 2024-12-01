@@ -5,16 +5,16 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: default_stage_two
   - _self_
-run_name: stage_two_pt
+run_name: stage_two_pt_crypto
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
-dataset_path: data/it_load_data_23_24.csv
-train_dataset_name: it_load_data_train
+dataset_path: data/eth_23_24.csv
+train_dataset_name: eth_data_train
 #### Iterative training arguments ####
-time_steps: 11
+time_steps: 52
 time_step_size: 168
-iter_step: 5
+iter_step: 1
 max_context_length: 720
 eval_buffer: 4320 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
@@ -29,7 +29,7 @@ train_dataset:
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: it_load_data_eval
+  dataset: eth_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -96,7 +96,7 @@ train_dataloader:
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 64
-  batch_size_factor: 40
+  batch_size_factor: 68
   cycle: false
   num_batches_per_epoch: null
   shuffle: false

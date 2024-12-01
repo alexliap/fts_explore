@@ -5,22 +5,22 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: default_stage_one
   - _self_
-run_name: stage_one
+run_name: stage_one_crypto
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
 ckpt_path: null # path of the checkpoint from which training is resumed.
 offset: 8760
-dataset_path: data/gr_load_data_23_24.csv
+dataset_path: data/btc_23_24.csv
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
-  dataset: gr_load_data
+  dataset: btc_data
   weight: 1000
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: gr_load_data_eval
+  dataset: btc_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -60,7 +60,7 @@ trainer:
       mode: min
       strict: false
       verbose: true
-  max_epochs: 1
+  max_epochs: 40
   enable_progress_bar: true
   accumulate_grad_batches: 1
   gradient_clip_val: 1.0
@@ -71,7 +71,7 @@ train_dataloader:
   batch_size: 256
   batch_size_factor: 20
   cycle: true
-  num_batches_per_epoch: 2
+  num_batches_per_epoch: 20
   shuffle: true
   num_workers: 0
   collate_fn:

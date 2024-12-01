@@ -1,7 +1,7 @@
 _target_: uni2ts.data.builder.ConcatDatasetBuilder
 _args_:
   _target_: uni2ts.data.builder.simple.generate_eval_builders
-  dataset: gr_load_data_eval
+  dataset: btc_data_eval
   offset: 8760
   eval_length: 4320
   prediction_lengths: [168, 336, 504, 720] # 1 week, 2 weeks, 3 weeks, 1 month
