@@ -9,8 +9,8 @@ if __name__ == "__main__":
     parser.add_argument("--dir", required=True)
     args = parser.parse_args()
 
-    start = "2023-01-01"
-    end = "2024-07-01"
+    start = "2015-01-01"
+    end = "2024-10-01"
 
     btc = yf.download(tickers="BTC-USD", start=start, end=end, interval="1h")
     btc = btc["Close"]
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     eth["DateUTC"] = eth.index
     eth["DateUTC"] = eth["DateUTC"].dt.tz_localize(None)
 
-    date_range = pd.date_range(start=start, end=end, freq="h", inclusive="left")
+    date_range = pd.date_range(start=start, end=end, freq="d", inclusive="left")
     date_range = pd.DataFrame({"DateUTC": date_range})
 
     btc = date_range.merge(btc, how="left", on="DateUTC")
@@ -31,5 +31,5 @@ if __name__ == "__main__":
     eth = date_range.merge(eth, how="left", on="DateUTC")
     eth["ETH-USD"] = eth["ETH-USD"].ffill()
 
-    btc.to_csv(os.path.join(args.dir, "btc_23_24.csv"), index=False)
-    eth.to_csv(os.path.join(args.dir, "eth_23_24.csv"), index=False)
+    btc.to_csv(os.path.join(args.dir, "btc_15_24.csv"), index=False)
+    eth.to_csv(os.path.join(args.dir, "eth_15_24.csv"), index=False)
