@@ -10,8 +10,10 @@ seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
 ckpt_path: null # path of the checkpoint from which training is resumed.
-offset: 8760
-dataset_path: data/btc_23_24.csv
+offset: null
+date_offset: "2022-01-01"
+freq: D
+dataset_path: data/btc_15_24.csv
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
@@ -69,9 +71,9 @@ trainer:
 train_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 256
-  batch_size_factor: 20
+  batch_size_factor: 5
   cycle: true
-  num_batches_per_epoch: 20
+  num_batches_per_epoch: 5
   shuffle: true
   num_workers: 0
   collate_fn:
@@ -89,7 +91,7 @@ train_dataloader:
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 64
-  batch_size_factor: 68
+  batch_size_factor: 16
   cycle: false
   num_batches_per_epoch: null
   shuffle: false

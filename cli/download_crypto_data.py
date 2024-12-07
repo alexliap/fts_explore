@@ -12,12 +12,12 @@ if __name__ == "__main__":
     start = "2015-01-01"
     end = "2024-10-01"
 
-    btc = yf.download(tickers="BTC-USD", start=start, end=end, interval="1h")
+    btc = yf.download(tickers="BTC-USD", start=start, end=end, interval="1d")
     btc = btc["Close"]
     btc["DateUTC"] = btc.index
     btc["DateUTC"] = btc["DateUTC"].dt.tz_localize(None)
 
-    eth = yf.download(tickers="ETH-USD", start=start, end=end, interval="1h")
+    eth = yf.download(tickers="ETH-USD", start=start, end=end, interval="1d")
     eth = eth["Close"]
     eth["DateUTC"] = eth.index
     eth["DateUTC"] = eth["DateUTC"].dt.tz_localize(None)
@@ -31,5 +31,5 @@ if __name__ == "__main__":
     eth = date_range.merge(eth, how="left", on="DateUTC")
     eth["ETH-USD"] = eth["ETH-USD"].ffill()
 
-    btc.to_csv(os.path.join(args.dir, "btc_15_24.csv"), index=False)
-    eth.to_csv(os.path.join(args.dir, "eth_15_24.csv"), index=False)
+    btc.dropna().to_csv(os.path.join(args.dir, "btc_15_24.csv"), index=False)
+    eth.dropna().to_csv(os.path.join(args.dir, "eth_15_24.csv"), index=False)

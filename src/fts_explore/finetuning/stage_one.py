@@ -44,7 +44,8 @@ class StageOneFinetuning:
             offset=self.cfg.offset,
             dataset_type="wide",
             file=self.cfg.dataset_path,
-            freq="H",
+            freq=self.cfg.freq,
+            date_offset=self.cfg.date_offset,
         )
 
         if self.cfg.validation_dataset.dataset != self.cfg.val_data._args_.dataset:
@@ -54,7 +55,7 @@ class StageOneFinetuning:
 
         # build validation dataset
         instantiate(self.cfg.validation_dataset).build_dataset(
-            dataset_type="wide", file=self.cfg.dataset_path, freq="H"
+            dataset_type="wide", file=self.cfg.dataset_path, freq=self.cfg.freq
         )
 
     def _prepare_training_vars(self):

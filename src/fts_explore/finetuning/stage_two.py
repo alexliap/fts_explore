@@ -66,12 +66,12 @@ class StageTwoFinetuning:
                 offset=train_size,
                 dataset_type="wide",
                 file=self.cfg.dataset_path,
-                freq="H",
+                freq=self.cfg.freq,
             )
 
         # build validation dataset
         instantiate(self.cfg.validation_dataset).build_dataset(
-            dataset_type="wide", file=self.cfg.dataset_path, freq="H"
+            dataset_type="wide", file=self.cfg.dataset_path, freq=self.cfg.freq
         )
 
     def _prepare_model(self):
@@ -132,10 +132,14 @@ class StageTwoFinetuning:
                 self.cfg.val_data._args_.context_lengths = [offset]
 
             self.cfg.val_data._args_.dataset = self.cfg.validation_dataset.dataset
-            self.cfg.val_data._args_.offset = counter * self.cfg.time_step_size
+            self.cfg.val_data._args_.offset = offset
             self.cfg.val_data._args_.eval_length = (
                 self.cfg.time_steps - counter
             ) * self.cfg.time_step_size + self.cfg.eval_buffer
+
+        logger.info(f"Offest: {offset}")
+        logger.info(f"Context Lengths: {self.cfg.val_data._args_.context_lengths}")
+        logger.info(f"Evaluation Length: {self.cfg.val_data._args_.eval_length}")
 
     def _calculate_batch_variables(self, counter: int) -> None:
         max_batch_size: int = 256
