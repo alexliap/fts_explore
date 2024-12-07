@@ -164,6 +164,8 @@ class StageTwoFinetuning:
                 torch.ceil(torch.tensor(batch_size_factor)).item()
             )
 
+        logger.info(f"Batch Size: {self.cfg.train_dataloader.batch_size}")
+
     def _change_checkpoint_path(self, counter: int):
         with open_dict(self.cfg):
             if self.cfg.refit and counter > 1:
