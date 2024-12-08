@@ -13,7 +13,8 @@ echo "Downloading pyenv ..."
 
 curl https://pyenv.run | bash
 
-export PATH=$(pyenv root)/shims:$PATH
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 
 echo "Downloading python 3.11 ..."
 
