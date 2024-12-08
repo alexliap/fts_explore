@@ -61,19 +61,23 @@ def load_pretrained(
 def get_model_data(
     model_folder: str,
     prediction_lenght: int,
-    num_of_weeks: int,
+    time_steps: int,
+    time_step_size: int,
+    max_context_length: int,
+    target_var: str,
     data: pd.DataFrame,
     patch_size: int | str = "auto",
     num_samples: int = 100,
+    freq: str = "H",
 ):
-    if num_of_weeks * 7 * 24 < 720:
-        CTX = num_of_weeks * 7 * 24  # context length: any positive integer
+    if time_steps * time_step_size < max_context_length:
+        CTX = time_steps * time_step_size  # context length: any positive integer
     else:
-        CTX = 720
+        CTX = max_context_length
 
     # load the model of a specific week or the pretrained one
     if model_folder != "pretrained":
-        model_folder = model_folder + str(num_of_weeks)
+        model_folder = model_folder + str(time_steps)
         model = os.listdir(model_folder)[0]
 
         model_path = os.path.join(model_folder, model)
@@ -96,14 +100,14 @@ def get_model_data(
             num_samples=num_samples,
         )
 
-    ds = PandasDataset(data, target="Value", freq="H")
+    ds = PandasDataset(data, target=target_var, freq=freq)
 
     # Split into train/test set
     _, test_template = split(
-        ds, offset=-(data.shape[0] - num_of_weeks * (7 * 24))
+        ds, offset=-(data.shape[0] - time_steps * time_step_size)
     )  # assign last TEST time steps as test set
 
-    NUM_WINDOWS = (data.shape[0] - num_of_weeks * (7 * 24)) // prediction_lenght
+    NUM_WINDOWS = (data.shape[0] - time_steps * time_step_size) // prediction_lenght
 
     # Construct rolling window evaluation
     test_data = test_template.generate_instances(
