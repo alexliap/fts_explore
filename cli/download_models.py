@@ -26,11 +26,12 @@ if __name__ == "__main__":
 
     for blob in container_client.list_blobs():
         blob_name = blob.name
-        blob_path = "/".join(blob_name.split("/")[:-1])
+        if "crypto_data/stage_one" in blob_name:
+            blob_path = "/".join(blob_name.split("/")[:-1])
 
-        os.makedirs(os.path.join(args.download_dir, blob_path), exist_ok=True)
+            os.makedirs(os.path.join(args.download_dir, blob_path), exist_ok=True)
 
-        with open(
-            file=os.path.join(args.download_dir, blob_name), mode="wb"
-        ) as download_file:
-            download_file.write(container_client.download_blob(blob_name).readall())
+            with open(
+                file=os.path.join(args.download_dir, blob_name), mode="wb"
+            ) as download_file:
+                download_file.write(container_client.download_blob(blob_name).readall())

@@ -33,7 +33,10 @@ dev = [
   "azure-storage-blob",
   "azure-identity",
   "loguru",
-  "yfinance"
+  "yfinance",
+  "openmeteo-requests",
+  "requests_cache",
+  "retry-requests"
 ]
 
 [tool.hatch.version]
