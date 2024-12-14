@@ -98,7 +98,7 @@ if __name__ == "__main__":
     params = {
         "latitude": [37.9838, 40.8762, 38.132, 38.4127],
         "longitude": [23.7278, 14.5195, 13.3356, 27.1384],
-        "start_date": "2020-01-01",
+        "start_date": "2014-01-01",
         "end_date": "2024-11-30",
         "hourly": [
             "temperature_2m",
@@ -118,6 +118,7 @@ if __name__ == "__main__":
             "soil_moisture_100_to_255cm",
         ],
         "daily": [
+            "rain_sum",
             "temperature_2m_mean",
             "wind_speed_10m_max",
             "wind_gusts_10m_max",
@@ -136,15 +137,15 @@ if __name__ == "__main__":
         daily["DateUTC"] = daily["DateUTC"].dt.tz_localize(None)
 
         hourly.to_csv(
-            os.path.join(args.dir, f"weather_{city}_hourly_20_24.csv"), index=False
+            os.path.join(args.dir, f"weather_{city}_hourly_14_24.csv"), index=False
         )
         daily.to_csv(
-            os.path.join(args.dir, f"weather_{city}_daily_20_24.csv"), index=False
+            os.path.join(args.dir, f"weather_{city}_daily_14_24.csv"), index=False
         )
 
         hourly[["DateUTC", "temperature_2m"]].to_csv(
-            os.path.join(args.dir, f"weather_{city}_hourly_temp_20_24.csv"), index=False
+            os.path.join(args.dir, f"weather_{city}_hourly_temp_14_24.csv"), index=False
         )
         daily[["DateUTC", "temperature_2m_mean"]].to_csv(
-            os.path.join(args.dir, f"weather_{city}_daily_temp_20_24.csv"), index=False
+            os.path.join(args.dir, f"weather_{city}_daily_temp_14_24.csv"), index=False
         )

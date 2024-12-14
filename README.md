@@ -27,4 +27,7 @@
 
 - [ ] Search for other domains & subdomains to make experiments
   - [x] Daily crpto data (BTC & ETH)
-  - [ ] Weather data from Open Meteo
+    - Split train/validation data to 2022-01-01 => 1004 data points for validation
+  - [ ] Weather hourly & daily data from Open Meteo
+    - Hourly: Train 2023-2024 | Validation 2024 - 2024 + 4320 (like Load data)
+    - Daily:
