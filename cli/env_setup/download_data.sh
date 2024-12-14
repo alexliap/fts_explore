@@ -29,3 +29,6 @@ python -m merge_data
 
 echo "Downloading Crypto data ..."
 python -m cli.download_crypto_data --dir $DEST_DIR
+
+echo "Downloading Weather data ..."
+python -m cli.download_weather_data --dir $DEST_DIR
