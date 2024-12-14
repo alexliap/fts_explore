@@ -20,7 +20,11 @@
       - [x] With 20% dropout
   - [x] Experiment with different ways of evaluation/visualization
     - [x] Get forecasts and targets, in order to calculate whichever metric
-- [ ] Create pipeline where all the above steps are excecuted with the use of Hydra configuration files.
+- [x] Create pipeline where all the above steps are excecuted with the use of Hydra configuration files.
   - [x] Create pipeline for Stage 1
   - [x] Create pipeline for Stage 2
-  - [ ] Test pipeline end to end
+  - [x] Test pipeline end to end
+
+- [ ] Search for other domains & subdomains to make experiments
+  - [x] Daily crpto data (BTC & ETH)
+  - [ ] Weather data from Open Meteo
