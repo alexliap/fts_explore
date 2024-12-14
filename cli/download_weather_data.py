@@ -141,3 +141,10 @@ if __name__ == "__main__":
         daily.to_csv(
             os.path.join(args.dir, f"weather_{city}_daily_20_24.csv"), index=False
         )
+
+        hourly[["DateUTC", "temperature_2m"]].to_csv(
+            os.path.join(args.dir, f"weather_{city}_hourly_temp_20_24.csv"), index=False
+        )
+        daily[["DateUTC", "temperature_2m_mean"]].to_csv(
+            os.path.join(args.dir, f"weather_{city}_daily_temp_20_24.csv"), index=False
+        )
