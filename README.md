@@ -31,3 +31,7 @@
   - [ ] Weather hourly & daily data from Open Meteo
     - Hourly: Train 2023-2024 | Validation 2024 - 2024 + 4320 (like Load data)
     - Daily:
+
+- [ ] Add WQL as a comparison metric. WQL stands for weight quantile loss and is implemented by gluonTS
+      as MeanWeightedSumQuantileLoss. It says mean beacuse it computes WeightedSumQuantileLoss for several quantiles
+      and then calcualtes the mean.
