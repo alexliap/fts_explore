@@ -129,6 +129,12 @@ if __name__ == "__main__":
     for city, response in zip(cities, responses):
         hourly, daily = load_hourly_values(response), load_daily_values(response)
 
+        hourly = hourly.rename({"date": "DateUTC"}, axis=1)
+        hourly["DateUTC"] = hourly["DateUTC"].dt.tz_localize(None)
+
+        daily = daily.rename({"date": "DateUTC"}, axis=1)
+        daily["DateUTC"] = daily["DateUTC"].dt.tz_localize(None)
+
         hourly.to_csv(
             os.path.join(args.dir, f"weather_{city}_hourly_20_24.csv"), index=False
         )

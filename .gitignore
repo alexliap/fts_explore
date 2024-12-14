@@ -172,3 +172,4 @@ moirai_large_weights/
 *.csv
 custom_data/
 .python-version
+*.cache*
