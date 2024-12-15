@@ -5,15 +5,16 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: default_stage_one
   - _self_
-run_name: stage_one_crypto
+run_name: stage_one_temperature
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
 ckpt_path: null # path of the checkpoint from which training is resumed.
 offset: null
-date_offset: "2022-01-01"
+date_offset: "2021-01-01"
 freq: D
 dataset_path: data/weather_Athens_daily_temp_14_24.csv
+delta_scale: 0.0001
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
@@ -49,15 +50,15 @@ trainer:
       logging_interval: epoch
     - _target_: lightning.pytorch.callbacks.ModelCheckpoint
       dirpath: ${hydra:runtime.output_dir}/checkpoints
-      monitor: val/PackedMSELoss
+      monitor: val/PackedNLLLoss
       save_weights_only: true
       filename: stage_one
       mode: min
       save_top_k: 1
       every_n_epochs: 1
     - _target_: lightning.pytorch.callbacks.EarlyStopping
-      monitor: val/PackedMSELoss
-      min_delta: 1000
+      monitor: val/PackedNLLLoss
+      min_delta: 0.001
       patience: 20
       mode: min
       strict: false
@@ -71,9 +72,9 @@ trainer:
 train_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 256
-  batch_size_factor: 6
+  batch_size_factor: 10
   cycle: true
-  num_batches_per_epoch: 6
+  num_batches_per_epoch: 5
   shuffle: true
   num_workers: 0
   collate_fn:
@@ -91,7 +92,7 @@ train_dataloader:
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 64
-  batch_size_factor: 16
+  batch_size_factor: 22
   cycle: false
   num_batches_per_epoch: null
   shuffle: false

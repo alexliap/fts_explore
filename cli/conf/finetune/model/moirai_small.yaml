@@ -32,4 +32,4 @@ beta1: 0.9
 beta2: 0.98
 num_training_steps: ${mul:${trainer.max_epochs},${train_dataloader.num_batches_per_epoch}}
 num_warmup_steps: 0
-checkpoint_path: outputs/finetune/stage_one_crypto/checkpoints/stage_one.ckpt
+checkpoint_path: outputs/finetune/stage_one_temperature/checkpoints/stage_one.ckpt

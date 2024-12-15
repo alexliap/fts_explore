@@ -112,13 +112,15 @@ class StageOneFinetuning:
         logger.info("Freezed necessary layers ...")
 
     def _edit_patience_delta(self):
-        dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
-        data_mean = dataset.mean().item()
-        delta = data_mean * 0.1
-        if delta > 1000:
-            delta = 1000
-        with open_dict(self.cfg):
-            self.cfg.trainer.callbacks[2]["min_delta"] = delta
-            logger.info(
-                f"Patience min_delta equals to {self.cfg.trainer.callbacks[2]['min_delta']}"
-            )
+        if self.cfg.trainer.callbacks[2].monitor == "val/PackedMSELoss":
+            dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
+            data_mean = dataset.mean().item()
+            delta = data_mean * self.cfg.delta_scale
+            if delta > 1000:
+                delta = 1000
+            with open_dict(self.cfg):
+                self.cfg.trainer.callbacks[2]["min_delta"] = delta
+
+        logger.info(
+            f"Patience min_delta equals to {self.cfg.trainer.callbacks[2]['min_delta']}"
+        )

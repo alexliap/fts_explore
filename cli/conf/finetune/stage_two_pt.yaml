@@ -10,14 +10,15 @@ seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
 dataset_path: data/weather_Smurni_daily_temp_14_24.csv
+delta_scale: 0.001
 freq: D
 train_dataset_name: weather_temp_Smurni_data_train
 #### Iterative training arguments ####
-time_steps: 26
+time_steps: 42
 time_step_size: 60
 iter_step: 1
 max_context_length: 30
-eval_buffer: 1065 # data points that are only going to be used for evaluation |
+eval_buffer: 1430 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
 refit: false
 thorough: true

@@ -153,15 +153,15 @@ class StageTwoFinetuning:
         # caclulate correct batch_size_factor
         batch_size_factor = offset / max_batch_size
 
-        if self.cfg.thorough:
-            batch_size_factor = batch_size_factor / 2
+        # if self.cfg.thorough:
+        #     batch_size_factor = batch_size_factor / 2
 
         with open_dict(self.cfg):
             # modify train dataloader
             self.cfg.train_dataloader.batch_size = max_batch_size
             self.cfg.train_dataloader.batch_size_factor = batch_size_factor
             self.cfg.train_dataloader.num_batches_per_epoch = int(
-                torch.ceil(torch.tensor(batch_size_factor)).item()
+                torch.ceil(torch.tensor(batch_size_factor)).item() / 2
             )
 
         logger.info(f"Batch Size: {self.cfg.train_dataloader.batch_size}")
@@ -187,7 +187,9 @@ class StageTwoFinetuning:
     def _edit_patience_delta(self):
         dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
         data_mean = dataset.mean().item()
-        delta = data_mean * 0.1
+        delta = data_mean * self.cfg.delta_scale
+        if delta > 1000:
+            delta = 1000
         with open_dict(self.cfg):
             self.cfg.trainer.callbacks[2]["min_delta"] = delta
             logger.info(
