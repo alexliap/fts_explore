@@ -14,7 +14,7 @@ offset: null
 date_offset: "2021-01-01"
 freq: D
 dataset_path: data/weather_Athens_daily_temp_14_24.csv
-delta_scale: 0.0001
+delta_scale: null
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder

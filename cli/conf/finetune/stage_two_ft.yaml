@@ -10,7 +10,7 @@ seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
 dataset_path: data/weather_Smurni_daily_temp_14_24.csv
-delta_scale: 0.001
+delta_scale: null
 freq: D
 train_dataset_name: weather_temp_Smurni_data_train
 #### Iterative training arguments ####
@@ -59,14 +59,14 @@ trainer:
       logging_interval: epoch
     - _target_: lightning.pytorch.callbacks.ModelCheckpoint
       dirpath: null
-      monitor: val/PackedMSELoss
+      monitor: val/PackedNLLLoss
       save_weights_only: true
       mode: min
       save_top_k: 1
       every_n_epochs: 1
     - _target_: lightning.pytorch.callbacks.EarlyStopping
-      monitor: val/PackedMSELoss
-      min_delta: 1000
+      monitor: val/PackedNLLLoss
+      min_delta: 0.001
       patience: 1
       mode: min
       strict: false

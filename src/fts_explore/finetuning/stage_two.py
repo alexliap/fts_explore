@@ -153,15 +153,17 @@ class StageTwoFinetuning:
         # caclulate correct batch_size_factor
         batch_size_factor = offset / max_batch_size
 
-        # if self.cfg.thorough:
-        #     batch_size_factor = batch_size_factor / 2
+        num_batches_per_epoch = batch_size_factor
+
+        if self.cfg.thorough:
+            num_batches_per_epoch = num_batches_per_epoch / 2
 
         with open_dict(self.cfg):
             # modify train dataloader
             self.cfg.train_dataloader.batch_size = max_batch_size
             self.cfg.train_dataloader.batch_size_factor = batch_size_factor
             self.cfg.train_dataloader.num_batches_per_epoch = int(
-                torch.ceil(torch.tensor(batch_size_factor)).item() / 2
+                torch.ceil(torch.tensor(num_batches_per_epoch)).item()
             )
 
         logger.info(f"Batch Size: {self.cfg.train_dataloader.batch_size}")
@@ -185,13 +187,15 @@ class StageTwoFinetuning:
             logger.info(self.cfg.trainer.callbacks[1]["dirpath"])
 
     def _edit_patience_delta(self):
-        dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
-        data_mean = dataset.mean().item()
-        delta = data_mean * self.cfg.delta_scale
-        if delta > 1000:
-            delta = 1000
-        with open_dict(self.cfg):
-            self.cfg.trainer.callbacks[2]["min_delta"] = delta
-            logger.info(
-                f"Patience min_delta equals to {self.cfg.trainer.callbacks[2]['min_delta']}"
-            )
+        if self.cfg.trainer.callbacks[2].monitor == "val/PackedMSELoss":
+            dataset = pd.read_csv(self.cfg.dataset_path, index_col=0, parse_dates=True)
+            data_mean = dataset.mean().item()
+            delta = data_mean * self.cfg.delta_scale
+            if delta > 1000:
+                delta = 1000
+            with open_dict(self.cfg):
+                self.cfg.trainer.callbacks[2]["min_delta"] = delta
+
+        logger.info(
+            f"Patience min_delta equals to {self.cfg.trainer.callbacks[2]['min_delta']}"
+        )

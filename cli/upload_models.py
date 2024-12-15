@@ -16,7 +16,7 @@ container_client = blob_service_client.get_container_client(
     container="model-checkpoints"
 )
 
-directory = "crypto_data"
+directory = "weather_temperature_data"
 for root, dirs, files in os.walk("outputs"):
     for file in files:
         file_path = os.path.join(root, file)
