@@ -60,10 +60,11 @@ def load_hourly_values(response: WeatherApiResponse):
 def load_daily_values(response: WeatherApiResponse):
     # Process daily data. The order of variables needs to be the same as requested.
     daily = response.Daily()
-    daily_temperature_2m_mean = daily.Variables(0).ValuesAsNumpy()
-    daily_wind_speed_10m_max = daily.Variables(1).ValuesAsNumpy()
-    daily_wind_gusts_10m_max = daily.Variables(2).ValuesAsNumpy()
-    daily_wind_direction_10m_dominant = daily.Variables(3).ValuesAsNumpy()
+    daily_rain_sum = daily.Variables(0).ValuesAsNumpy()
+    daily_temperature_2m_mean = daily.Variables(1).ValuesAsNumpy()
+    daily_wind_speed_10m_max = daily.Variables(2).ValuesAsNumpy()
+    daily_wind_gusts_10m_max = daily.Variables(3).ValuesAsNumpy()
+    daily_wind_direction_10m_dominant = daily.Variables(4).ValuesAsNumpy()
 
     daily_data = {
         "date": pd.date_range(
@@ -73,6 +74,7 @@ def load_daily_values(response: WeatherApiResponse):
             inclusive="left",
         )
     }
+    daily_data["rain_sum"] = daily_rain_sum
     daily_data["temperature_2m_mean"] = daily_temperature_2m_mean
     daily_data["wind_speed_10m_max"] = daily_wind_speed_10m_max
     daily_data["wind_gusts_10m_max"] = daily_wind_gusts_10m_max
