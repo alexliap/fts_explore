@@ -1,9 +1,9 @@
 _target_: uni2ts.data.builder.ConcatDatasetBuilder
 _args_:
   _target_: uni2ts.data.builder.simple.generate_eval_builders
-  dataset: btc_data_eval
-  offset: 2557
-  eval_length: 1004
+  dataset: weather_temp_Athens_data_eval
+  offset: 2922
+  eval_length: 1065
   prediction_lengths: [7, 14, 21, 30] # 1 week, 2 weeks, 3 weeks, 1 month
   context_lengths: [7, 14, 21, 30] # 1 month
   patch_sizes: [16, 32]

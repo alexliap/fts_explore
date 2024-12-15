@@ -13,16 +13,16 @@ ckpt_path: null # path of the checkpoint from which training is resumed.
 offset: null
 date_offset: "2022-01-01"
 freq: D
-dataset_path: data/btc_15_24.csv
+dataset_path: data/weather_Athens_daily_temp_14_24.csv
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
-  dataset: btc_data
+  dataset: weather_temp_Athens_data
   weight: 1000
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: btc_data_eval
+  dataset: weather_temp_Athens_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -71,9 +71,9 @@ trainer:
 train_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 256
-  batch_size_factor: 5
+  batch_size_factor: 6
   cycle: true
-  num_batches_per_epoch: 5
+  num_batches_per_epoch: 6
   shuffle: true
   num_workers: 0
   collate_fn:
