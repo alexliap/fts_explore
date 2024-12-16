@@ -5,7 +5,7 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: default_stage_two
   - _self_
-run_name: stage_two_pt_crypto
+run_name: stage_two_pt_temperature
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
@@ -17,7 +17,7 @@ train_dataset_name: weather_temp_Smurni_data_train
 time_steps: 42
 time_step_size: 60
 iter_step: 1
-max_context_length: 30
+max_context_length: null
 eval_buffer: 1430 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
 refit: false

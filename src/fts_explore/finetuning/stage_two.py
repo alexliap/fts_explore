@@ -128,7 +128,10 @@ class StageTwoFinetuning:
         offset = counter * self.cfg.time_step_size
 
         with open_dict(self.cfg):
-            if offset < self.cfg.max_context_length:
+            if (
+                self.cfg.max_context_length is not None
+                and offset < self.cfg.max_context_length
+            ):
                 self.cfg.val_data._args_.context_lengths = [offset]
 
             self.cfg.val_data._args_.dataset = self.cfg.validation_dataset.dataset

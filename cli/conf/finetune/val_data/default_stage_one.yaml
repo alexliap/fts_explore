@@ -4,6 +4,6 @@ _args_:
   dataset: weather_temp_Athens_data_eval
   offset: 2557
   eval_length: 1430
-  prediction_lengths: [7, 14, 21, 30] # 1 week, 2 weeks, 3 weeks, 1 month
-  context_lengths: [7, 14, 21, 30] # 1 month
+  prediction_lengths: [7, 14, 21, 30, 60] # 1 week, 2 weeks, 3 weeks, 1 month
+  context_lengths: [7, 14, 21, 30, 60] # 1 month
   patch_sizes: [16, 32]
