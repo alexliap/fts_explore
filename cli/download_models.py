@@ -27,6 +27,7 @@ if __name__ == "__main__":
     for blob in container_client.list_blobs():
         blob_name = blob.name
         if "" in blob_name:
+            # container_client.delete_blob(blob=blob_name)
             blob_path = "/".join(blob_name.split("/")[:-1])
 
             os.makedirs(os.path.join(args.download_dir, blob_path), exist_ok=True)
