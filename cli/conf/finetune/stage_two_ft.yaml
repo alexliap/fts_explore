@@ -5,20 +5,20 @@ defaults:
   - model: moirai_small
   - val_data: default_stage_two
   - _self_
-run_name: stage_two_ft_temperature
+run_name: stage_two_ft_crypto
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
-dataset_path: data/weather_Smurni_daily_temp_14_24.csv
-delta_scale: null
+dataset_path: data/eth_15_24.csv
+delta_scale: 0.05
 freq: D
-train_dataset_name: weather_temp_Smurni_data_train
+train_dataset_name: eth_data_train
 #### Iterative training arguments ####
-time_steps: 42
+time_steps: 25
 time_step_size: 60
 iter_step: 1
 max_context_length: null
-eval_buffer: 1430 # data points that are only going to be used for evaluation |
+eval_buffer: 1004 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
 refit: true
 thorough: false
@@ -31,7 +31,7 @@ train_dataset:
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: weather_temp_Smurni_data_eval
+  dataset: eth_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -59,14 +59,14 @@ trainer:
       logging_interval: epoch
     - _target_: lightning.pytorch.callbacks.ModelCheckpoint
       dirpath: null
-      monitor: val/PackedNLLLoss
+      monitor: val/PackedMSELoss
       save_weights_only: true
       mode: min
       save_top_k: 1
       every_n_epochs: 1
     - _target_: lightning.pytorch.callbacks.EarlyStopping
-      monitor: val/PackedNLLLoss
-      min_delta: 0.001
+      monitor: val/PackedMSELoss
+      min_delta: 1000
       patience: 1
       mode: min
       strict: false
@@ -100,7 +100,7 @@ train_dataloader:
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 64
-  batch_size_factor: 22
+  batch_size_factor: 16
   cycle: false
   num_batches_per_epoch: null
   shuffle: false
