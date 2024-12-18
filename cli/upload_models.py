@@ -4,10 +4,10 @@ import os
 from azure.storage.blob import BlobServiceClient
 
 # TODO: Replace <storage-account-name> with your actual storage account name
-storage_acc_name = ""
+account_name = ""
 blob_key = ""
 
-account_url = f"https://{storage_acc_name}.blob.core.windows.net"
+account_url = f"https://{account_name}.blob.core.windows.net"
 
 # Create the BlobServiceClient object
 blob_service_client = BlobServiceClient(account_url, credential=blob_key)
@@ -16,7 +16,7 @@ container_client = blob_service_client.get_container_client(
     container="model-checkpoints"
 )
 
-directory = "weather_temperature_data"
+directory = ""
 for root, dirs, files in os.walk("outputs"):
     for file in files:
         file_path = os.path.join(root, file)
