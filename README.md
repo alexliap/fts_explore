@@ -1,5 +1,17 @@
 # Thesis Stuff/Notes/TODOs
 
+## This is a repo dedicated to my MSc Thesis
+
+### Abstract (to be filled ...)
+
+## Instructions
+
+- Clone the repository using 
+```
+git clone https://github.com/alexliap/fts_explore.git
+```
+- to be filled ...
+
 ## ✅ TODO
 
 - [x] Find univariate dataset for first tests
@@ -27,11 +39,10 @@
 
 - [ ] Search for other domains & subdomains to make experiments
   - [x] Daily crpto data (BTC & ETH)
-    - Split train/validation data to 2022-01-01 => 1004 data points for validation
-  - [ ] Weather hourly & daily data from Open Meteo
-    - Hourly: Train 2023-2024 | Validation 2024 - 2024 + 4320 (like Load data)
-    - Daily:
+    - Split train/validation data to 2022-01-01 => 1004 data points for validation for Stage 1
+  - [x] Weather hourly & daily data from Open Meteo (Athens & Smunri)
+    - Daily: Train 2014-2021 | Validation 2021-2024 
 
-- [ ] Add WQL as a comparison metric. WQL stands for weight quantile loss and is implemented by gluonTS
+- [x] Add WQL as a comparison metric. WQL stands for weight quantile loss and is implemented by gluonTS
       as MeanWeightedSumQuantileLoss. It says mean beacuse it computes WeightedSumQuantileLoss for several quantiles
       and then calcualtes the mean.
