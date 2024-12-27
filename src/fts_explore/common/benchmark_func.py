@@ -98,6 +98,7 @@ def get_model_data(
             prediction_lenght=prediction_lenght,
             context_length=CTX,
             num_samples=num_samples,
+            patch_size=patch_size,
         )
 
     ds = PandasDataset(data, target=target_var, freq=freq)
