@@ -5,20 +5,21 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: default_stage_two
   - _self_
-run_name: stage_two_pt_crypto
+run_name: stage_two_pt_electricity
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
-dataset_path: data/eth_15_24.csv
+dataset_path: data/it_load_data_23_24.csv
 delta_scale: 0.05
-freq: D
-train_dataset_name: eth_data_train
+freq: H
+train_dataset_name: it_load_data_train
 #### Iterative training arguments ####
-time_steps: 25
-time_step_size: 60
+time_steps: 52
+time_step_size: 168
 iter_step: 1
-max_context_length: null
-eval_buffer: 1004 # data points that are only going to be used for evaluation |
+start: 1
+max_context_length: 720
+eval_buffer: 4368 # data points that are only going to be used for evaluation |
 # for it to work data shape >= biggest train_size + eval_buffer
 refit: false
 thorough: true
@@ -31,7 +32,7 @@ train_dataset:
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: eth_data_eval
+  dataset: it_load_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -76,6 +77,7 @@ trainer:
   accumulate_grad_batches: 1
   gradient_clip_val: 1.0
   gradient_clip_algorithm: norm
+
 train_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 8
@@ -95,10 +97,11 @@ train_dataloader:
   worker_init_fn: null
   prefetch_factor: 2
   persistent_workers: true
+
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
-  batch_size: 64
-  batch_size_factor: 16
+  batch_size: 32
+  batch_size_factor: 136
   cycle: false
   num_batches_per_epoch: null
   shuffle: false

@@ -46,9 +46,9 @@ if __name__ == "__main__":
     ]
     gr_data_2024 = gr_data_2024.sort_values("DateUTC")
 
-    pd.concat([gr_data_2023, gr_data_2024]).set_index("DateUTC").to_csv(
-        "data/gr_load_data_23_24.csv"
-    )
+    pd.concat([gr_data_2023, gr_data_2024]).set_index("DateUTC").iloc[
+        : 8760 + 4368, :
+    ].to_csv("data/gr_load_data_23_24.csv")
 
     # get data for Italy
     it_data_2023 = load_data("data/load_values_23.csv", country_code="IT")
@@ -58,6 +58,6 @@ if __name__ == "__main__":
     it_data_2024 = it_data_2024.sort_values("DateUTC")
     it_data_2024.iloc[2162, 0] = pd.Timestamp(2024, 3, 31, 2)
 
-    pd.concat([it_data_2023, it_data_2024]).set_index("DateUTC").to_csv(
-        "data/it_load_data_23_24.csv"
-    )
+    pd.concat([it_data_2023, it_data_2024]).set_index("DateUTC").iloc[
+        : 8760 + 4368, :
+    ].to_csv("data/it_load_data_23_24.csv")

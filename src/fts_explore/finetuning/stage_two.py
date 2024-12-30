@@ -43,7 +43,7 @@ class StageTwoFinetuning:
         self._edit_patience_delta()
 
         # iterative train loop
-        for i in range(1, self.cfg.time_steps + 1, self.cfg.iter_step):
+        for i in range(self.cfg.start, self.cfg.time_steps + 1, self.cfg.iter_step):
             train_dataset, val_dataset = self._prepare_training_vars(counter=i)
 
             # init Trainer

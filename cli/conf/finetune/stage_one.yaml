@@ -5,25 +5,25 @@ defaults:
   - model: moirai_1.0_R_small
   - val_data: default_stage_one
   - _self_
-run_name: stage_one_crypto
+run_name: stage_one_electricity
 seed: 0
 tf32: true
 compile: false  # set to mode: default, reduce-overhead, max-autotune
 ckpt_path: null # path of the checkpoint from which training is resumed.
 offset: null
-date_offset: "2022-01-01"
-freq: D
-dataset_path: data/btc_15_24.csv
-delta_scale: 0.05
+date_offset: "2023-12-31 23:00:00"
+freq: H
+dataset_path: data/gr_load_data_23_24.csv
+delta_scale: 0.1
 
 train_dataset:
   _target_: uni2ts.data.builder.simple.SimpleDatasetBuilder
-  dataset: btc_data
+  dataset: gr_load_data
   weight: 1000
 
 validation_dataset:
   _target_: uni2ts.data.builder.simple.SimpleEvalDatasetBuilder
-  dataset: btc_data_eval
+  dataset: gr_load_data_eval
   # these should remain None as per the authors instructions
   offset: null
   windows: null
@@ -71,10 +71,10 @@ trainer:
 
 train_dataloader:
   _target_: uni2ts.data.loader.DataLoader
-  batch_size: 256
-  batch_size_factor: 10
+  batch_size: 24
+  batch_size_factor: 180
   cycle: true
-  num_batches_per_epoch: 5
+  num_batches_per_epoch: 180
   shuffle: true
   num_workers: 0
   collate_fn:
@@ -92,7 +92,7 @@ train_dataloader:
 val_dataloader:
   _target_: uni2ts.data.loader.DataLoader
   batch_size: 64
-  batch_size_factor: 16
+  batch_size_factor: 68
   cycle: false
   num_batches_per_epoch: null
   shuffle: false
