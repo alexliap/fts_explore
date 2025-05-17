@@ -173,3 +173,4 @@ moirai_large_weights/
 custom_data/
 .python-version
 *.cache*
+model_checkpoints/
