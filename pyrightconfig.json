@@ -16,7 +16,13 @@
         "root": "./",
         "pythonVersion": "3.11",
         "pythonPlatform": "All",
-        "extraPaths": [".venv/lib/python3.11/site-packages/"]
+        "extraPaths": [".venv/lib/python3.11/Lib/site-packages/"]
+      },
+      {
+        "root": "./",
+        "pythonVersion": "3.11",
+        "pythonPlatform": "All",
+        "extraPaths": [".venv/Lib/site-packages/"]
       }
     ]
   }

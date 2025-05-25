@@ -14,6 +14,8 @@ from uni2ts.data.builder.simple import SimpleDatasetBuilder, SimpleEvalDatasetBu
 
 from fts_explore.data_module import DataModule
 
+from ..batch.batch import VariableBatch
+
 
 class StageTwoFinetuning:
     def __init__(self, cfg: DictConfig):
@@ -23,6 +25,8 @@ class StageTwoFinetuning:
         self.train_dataset = None
         self.val_dataset = None
         self.trainer = None
+
+        self.batch = VariableBatch()
 
         logger.info("Starting stage 2 of the process ...")
         logger.info(self.cfg)
@@ -145,25 +149,15 @@ class StageTwoFinetuning:
         logger.info(f"Evaluation Length: {self.cfg.val_data._args_.eval_length}")
 
     def _calculate_batch_variables(self, counter: int) -> None:
-        max_batch_size: int = 256
-
         offset = counter * self.cfg.time_step_size
 
-        # calculate correct batch_size
-        while offset < max_batch_size:
-            max_batch_size = int(max_batch_size / 2)
-
-        # caclulate correct batch_size_factor
-        batch_size_factor = offset / max_batch_size
-
-        num_batches_per_epoch = batch_size_factor
-
-        if self.cfg.thorough:
-            num_batches_per_epoch = num_batches_per_epoch / 2
+        batch_size, batch_size_factor, num_batches_per_epoch = (
+            self.batch.get_batch_params(offset=offset, is_thorough=self.cfg.thorough)
+        )
 
         with open_dict(self.cfg):
             # modify train dataloader
-            self.cfg.train_dataloader.batch_size = max_batch_size
+            self.cfg.train_dataloader.batch_size = batch_size
             self.cfg.train_dataloader.batch_size_factor = batch_size_factor
             self.cfg.train_dataloader.num_batches_per_epoch = int(
                 torch.ceil(torch.tensor(num_batches_per_epoch)).item()

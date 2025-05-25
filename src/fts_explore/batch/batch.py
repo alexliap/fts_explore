@@ -1,58 +1,30 @@
 from .base import IBatch
 
 
-class Batch(IBatch):
-    def __init__(
-        self,
-        type: str = "stable",
-        # equation: Union[None, Callable] = None,
-        # batch_size: Union[None, int] = None,
-        # batch_size_factor: Union[None, int] = None,
-    ):
-        if type not in ["stable", "variable"]:
-            raise ValueError("The type argument must either be 'stable' or 'variable'.")
-
-        self.type = type
-        # self.equation = equation
-        # self.batch_size = batch_size
-        # self.batch_size_factor = batch_size_factor
+class VariableBatch(IBatch):
+    def __init__(self):
+        self.MAX_BATCH_SIZE: int = 256
 
     def get_batch_params(
         self,
-        batch_size: int | None = None,
-        batch_size_factor: int | None = None,
-        num_batches_per_epoch: int | None = None,
+        offset: int,
+        is_thorough: bool,
     ) -> tuple:
-        self._do_checks(
-            batch_size=batch_size,
-            batch_size_factor=batch_size_factor,
-            num_batches_per_epoch=num_batches_per_epoch,
-        )
+        return self._compute_params(offset=offset, is_thorough=is_thorough)
 
-        if self.type == "stable":
-            return batch_size, batch_size_factor, num_batches_per_epoch
-        elif self.type == "variable":
-            return self._compute_params()
+    def _compute_params(self, offset: int, is_thorough: bool) -> tuple:
+        batch_size: int = self.MAX_BATCH_SIZE
 
-    def _compute_params(self) -> tuple:
-        return 1, 2, 3
+        # calculate suitable batch_size
+        while offset < self.MAX_BATCH_SIZE:
+            batch_size = int(batch_size / 2)
 
-    def _do_checks(
-        self,
-        batch_size: int | None = None,
-        batch_size_factor: int | None = None,
-        num_batches_per_epoch: int | None = None,
-    ) -> None:
-        pass
-        # if type == "stable" and (batch_size is None or batch_size_factor is None):
-        #     raise ValueError(
-        #         "If type of Batch is stable batch_size and batch_size_factor must be integers."
-        #     )
+        # caclulate correct batch_size_factor
+        batch_size_factor = offset / batch_size
 
-        # if type == "stable" and equation is not None:
-        #     raise ValueError(
-        #         "In order for the equation to be used type must be 'variable'."
-        #     )
+        num_batches_per_epoch = batch_size_factor
 
-        # if type == "variable" and equation is None:
-        #     raise ValueError("If type is 'variable' then equation can't be None.")
+        if is_thorough:
+            num_batches_per_epoch = num_batches_per_epoch / 2
+
+        return batch_size, batch_size_factor, num_batches_per_epoch
